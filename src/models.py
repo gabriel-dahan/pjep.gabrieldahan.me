@@ -20,6 +20,10 @@ class Subject(db.Model):
 
     # RELATIONSHIPS
     actions = db.relationship('SubjectAction', backref = 'subject', lazy = True) # One-to-Many
+    journal_items = db.relationship('JournalPageItem', backref = 'subject', lazy = True) # One-to-Many
+    holidays_items = db.relationship('HolidaysPlanningItem', backref = 'subject', lazy = True) # One-to-Many
+    week_items = db.relationship('WeekPlanningItem', backref = 'subject', lazy = True) # One-to-Many
+
 
 class SubjectAction(db.Model):
     __tablename__ = 'subject_actions'
@@ -44,6 +48,20 @@ class JournalPage(db.Model):
     # FOREIGN KEYS
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
 
+class JournalPageItem(db.Model):
+    __tablename__ = 'journal_pages_items'
+
+    id: int = db.Column(db.Integer, primary_key = True)
+
+    hour_start: datetime = db.Column(db.DateTime, nullable = False)
+    hour_end: datetime = db.Column(db.DateTime, nullable = False)
+
+    content: str = db.Column(db.Text, nullable = False)
+
+    # FOREIGN KEYS
+    planning_id = db.Column(db.Integer, db.ForeignKey('week_plannings.id'), nullable = False)
+    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
+
 ###### HOLIDAYS PLANNING ######
 
 class HolidaysPlanning(db.Model):
@@ -57,7 +75,8 @@ class HolidaysPlanning(db.Model):
     # FOREIGN KEYS
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
 
-    # Rel: HolidaysPlanningItem (OtM),
+    # RELATIONSHIPS
+    items = db.relationship('HolidaysPlanningItem', backref = 'planning', lazy = True) # One-to-Many
 
 class HolidaysPlanningItem(db.Model):
     __tablename__ = 'holidays_plannings_items'
@@ -68,7 +87,9 @@ class HolidaysPlanningItem(db.Model):
     time_spent: datetime = db.Column(db.DateTime, nullable = False)
     achieved: bool = db.Column(db.Boolean, nullable = False, default = False)
 
-    # Rel: Subject (MtM), SubjectAction (MtM), 
+    # FOREIGN KEYS
+    planning_id = db.Column(db.Integer, db.ForeignKey('holidays_plannings.id'), nullable = False)
+    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
 
 ###### WEEK PLANNING ######
     
@@ -83,6 +104,9 @@ class WeekPlanning(db.Model):
     # FOREIGN KEYS
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
 
+    # RELATIONSHIPS
+    items = db.relationship('WeekPlanningItem', backref = 'planning', lazy = True) # One-to-Many
+
 class WeekPlanningItem(db.Model):
     __tablename__ = 'week_plannings_items'
 
@@ -92,6 +116,10 @@ class WeekPlanningItem(db.Model):
     hour_end: datetime = db.Column(db.DateTime, nullable = False)
 
     content: str = db.Column(db.Text, nullable = False)
+
+    # FOREIGN KEYS
+    planning_id = db.Column(db.Integer, db.ForeignKey('week_plannings.id'), nullable = False)
+    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
 
 ###### REPORT ######
 
@@ -120,7 +148,7 @@ class User(db.Model, UserMixin):
     # RELATIONSHIPS
     subjects = db.relationship('Subject', backref = 'user', lazy = True) # One-to-Many
     journal_pages = db.relationship('JournalPage', backref = 'author', lazy = True) # One-to-Many
-    holidays_plannings = db.relationship('HolidayPlanning', backref = 'author', lazy = True) # One-to-Many
+    holidays_plannings = db.relationship('HolidaysPlanning', backref = 'author', lazy = True) # One-to-Many
     week_plannings = db.relationship('WeekPlanning', backref = 'author', lazy = True) # One-to-Many
     reports = db.relationship('Report', backref = 'author', lazy = True) # One-to-Many
 
