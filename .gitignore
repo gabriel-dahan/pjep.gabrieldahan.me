@@ -4,3 +4,4 @@
 
 # DB
 instance/
+__pycache__/
