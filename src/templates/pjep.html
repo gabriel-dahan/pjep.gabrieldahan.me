@@ -1,32 +1,27 @@
-<!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>PJEP</title>
-    </head>
-    <body>
-        <nav>
-            <div class="nav-el">
-                <a href="">Activités disponibles</a>
+{% extends 'base.html' %}
+
+{% block title %}PJEP{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="section">
+        <h3>Journal</h3>
+    </div>
+    <div class="section">
+        <h3>Plannings</h3>
+        <div class="plannings">
+            <div class="subsection">
+                <div class="subtitle">Semaines</div>
             </div>
-        </nav>
-        <main>
-            <div class="section">
-                <div class="title">Journal</div>
+            <div class="subsection">
+                <div class="subtitle">Vacances</div>
             </div>
-            <div class="section">
-                <div class="title">Plannings</div>
-                <div class="subsection">
-                    <div class="subtitle">Semaines</div>
-                </div>
-                <div class="subsection">
-                    <div class="subtitle">Vacances</div>
-                </div>
-                <section class="subsection">
-                    <div class="subtitle">Bilans</div>
-                </div>
+            <section class="subsection">
+                <div class="subtitle">Bilans</div>
             </div>
-        </main>
-    </body>
-</html>
+        </div>
+    </div>
+{% endblock %}

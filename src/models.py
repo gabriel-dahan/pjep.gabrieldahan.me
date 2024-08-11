@@ -48,6 +48,9 @@ class JournalPage(db.Model):
     # FOREIGN KEYS
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
 
+    # RELATIONSHIPS
+    items = db.relationship('JournalPageItem', backref = 'journal', lazy = True) # One-to-Many
+
 class JournalPageItem(db.Model):
     __tablename__ = 'journal_pages_items'
 
@@ -59,7 +62,7 @@ class JournalPageItem(db.Model):
     content: str = db.Column(db.Text, nullable = False)
 
     # FOREIGN KEYS
-    planning_id = db.Column(db.Integer, db.ForeignKey('week_plannings.id'), nullable = False)
+    journal_id = db.Column(db.Integer, db.ForeignKey('journal_pages.id'), nullable = False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
 
 ###### HOLIDAYS PLANNING ######

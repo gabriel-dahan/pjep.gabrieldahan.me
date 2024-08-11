@@ -6,8 +6,10 @@ from wtforms.validators import (
     DataRequired, Length, EqualTo, ValidationError, Regexp
 )
 
-from . import CONF
-from .models import User
+from .. import CONF
+from ..models import User
+
+from . import FormErrors
 
 USERNAME_MIN_LENGTH = 3
 USERNAME_MAX_LENGTH = 20
@@ -86,7 +88,7 @@ class LoginForm(FlaskForm):
     def validate_username(self, username):
         if not User.query.filter_by(name = username.data).first():
             raise ValidationError(FormErrors.USERNAME_DOESNT_EXISTS)
-        
+
 class EditProfileForm(FlaskForm):
     username = StringField(
         'Nouveau nom d\'utilisateur', 

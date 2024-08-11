@@ -30,34 +30,6 @@
 
 /* LOADING PAGE */
 
-#loader {
-	z-index: 10001;
-    border: 7px solid #8b8b8b;
-    border-radius: 50%;
-    border-top: 7px solid #363636;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-}
-
-#loader-background {
-	z-index: 10000;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-
-	backdrop-filter: blur(10px);
-}
-
 @keyframes spin {
     100% {
         transform: rotate(360deg);

@@ -25,7 +25,6 @@ __cors = CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = CONF['DB_URI']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 # LOGIN MANAGER
 login_manager = LoginManager(app)
@@ -40,7 +39,7 @@ def load_user(user_id):
 def home():
     return render_template('pjep.html', users = User.query.all())
 
-from .forms import LoginForm, RegistrationForm
+from .forms.auth import LoginForm, RegistrationForm
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
