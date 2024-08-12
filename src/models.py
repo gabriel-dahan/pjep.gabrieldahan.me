@@ -24,6 +24,11 @@ class Subject(db.Model):
     holidays_items = db.relationship('HolidaysPlanningItem', backref = 'subject', lazy = True) # One-to-Many
     week_items = db.relationship('WeekPlanningItem', backref = 'subject', lazy = True) # One-to-Many
 
+    user = db.relationship('User', backref = 'subjects', lazy = True) # One-to-Many
+
+    def __repr__(self) -> str:
+        return f'Subject(name: {self.name}, teacher: {self.teacher})'
+
 
 class SubjectAction(db.Model):
     __tablename__ = 'subject_actions'
@@ -34,6 +39,9 @@ class SubjectAction(db.Model):
 
     # FOREIGN KEYS
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
+
+    def __repr__(self) -> str:
+        return f'SubjectAction(description: {self.description})'
 
 ###### JOURNAL ######
 
@@ -51,6 +59,9 @@ class JournalPage(db.Model):
     # RELATIONSHIPS
     items = db.relationship('JournalPageItem', backref = 'journal', lazy = True) # One-to-Many
 
+    def __repr__(self) -> str:
+        return f'JournalPage(date: {self.date.strftime('%d/%m/%Y')})'
+
 class JournalPageItem(db.Model):
     __tablename__ = 'journal_pages_items'
 
@@ -64,6 +75,9 @@ class JournalPageItem(db.Model):
     # FOREIGN KEYS
     journal_id = db.Column(db.Integer, db.ForeignKey('journal_pages.id'), nullable = False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
+
+    def __repr__(self) -> str:
+        return f'JournalPageItem(date: {self.journal.date.strftime('%d/%m/%Y')}, hour_start: {self.hour_start.strftime('%H:%M')}, hour_end: {self.hour_end.strftime('%H:%M')}, content: {self.content})'
 
 ###### HOLIDAYS PLANNING ######
 
@@ -81,6 +95,9 @@ class HolidaysPlanning(db.Model):
     # RELATIONSHIPS
     items = db.relationship('HolidaysPlanningItem', backref = 'planning', lazy = True) # One-to-Many
 
+    def __repr__(self) -> str:
+        return f'HolidaysPlanning(date_start: {self.date_start.strftime('%d/%m/%Y')}, date_end: {self.date_end.strftime('%d/%m/%Y')})'
+
 class HolidaysPlanningItem(db.Model):
     __tablename__ = 'holidays_plannings_items'
 
@@ -93,6 +110,9 @@ class HolidaysPlanningItem(db.Model):
     # FOREIGN KEYS
     planning_id = db.Column(db.Integer, db.ForeignKey('holidays_plannings.id'), nullable = False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
+
+    def __repr__(self) -> str:
+        return f'HolidaysPlanningItem(time_spent: {self.time_spent.strftime('%H:%M')}, content: {self.content}, achieved: {self.achieved})'
 
 ###### WEEK PLANNING ######
     
@@ -110,6 +130,9 @@ class WeekPlanning(db.Model):
     # RELATIONSHIPS
     items = db.relationship('WeekPlanningItem', backref = 'planning', lazy = True) # One-to-Many
 
+    def __repr__(self) -> str:
+        return f'WeekPlanning(date_start: {self.date_start.strftime('%d/%m/%Y')}, date_end: {self.date_end.strftime('%d/%m/%Y')})'
+
 class WeekPlanningItem(db.Model):
     __tablename__ = 'week_plannings_items'
 
@@ -123,6 +146,9 @@ class WeekPlanningItem(db.Model):
     # FOREIGN KEYS
     planning_id = db.Column(db.Integer, db.ForeignKey('week_plannings.id'), nullable = False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
+
+    def __repr__(self) -> str:
+        return f'WeekPlanningItem(hour_start: {self.hour_start.strftime('%H:%M')}, hour_end: {self.hour_end.strftime('%H:%M')}, content: {self.content})'
 
 ###### REPORT ######
 
@@ -139,6 +165,9 @@ class Report(db.Model):
     # FOREIGN KEYS
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
 
+    def __repr__(self) -> str:
+        return f'Report(date_start: {self.date_start.strftime('%d/%m/%Y')}, date_end: {self.date_end.strftime('%d/%m/%Y')}, content: {self.content})'
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
@@ -149,7 +178,6 @@ class User(db.Model, UserMixin):
     date_created: datetime = db.Column(db.DateTime, default = datetime.now(), nullable = False)
 
     # RELATIONSHIPS
-    subjects = db.relationship('Subject', backref = 'user', lazy = True) # One-to-Many
     journal_pages = db.relationship('JournalPage', backref = 'author', lazy = True) # One-to-Many
     holidays_plannings = db.relationship('HolidaysPlanning', backref = 'author', lazy = True) # One-to-Many
     week_plannings = db.relationship('WeekPlanning', backref = 'author', lazy = True) # One-to-Many

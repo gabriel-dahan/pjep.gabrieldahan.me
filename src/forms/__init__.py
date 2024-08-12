@@ -1,4 +1,3 @@
-
 class FormErrors:
 
     FIELD_REQUIRED = "Ce champ est requis."
@@ -6,3 +5,6 @@ class FormErrors:
     PASSWORD_DOESNT_MATCH = "Les mots de passe ne correspondent pas."
     USERNAME_ALREADY_EXISTS = "Ce nom d'utilisateur existe déjà."
     USERNAME_DOESNT_EXISTS = "Ce nom d'utilisateur n'existe pas."
+
+from .auth import *
+from .pjep import *

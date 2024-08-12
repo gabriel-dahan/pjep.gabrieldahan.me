@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, current_user, login_user, login_required, logout_user
-from flask_migrate import Migrate
+from flask_login import LoginManager
 from flask_cors import CORS
 
-from passlib.hash import sha256_crypt
 from dotenv import dotenv_values
+
+import os
 
 CONF = dotenv_values('.env')
 
@@ -34,47 +34,28 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.filter_by(id = user_id).first()
 
-
-@app.route('/')
-def home():
-    return render_template('pjep.html', users = User.query.all())
-
-from .forms.auth import LoginForm, RegistrationForm
-
-@app.route('/login', methods = ['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(name = form.username.data).first()
-        if user and sha256_crypt.verify(form.password.data, user.passwd):
-            login_user(user)
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('home'))
-    return render_template('login.html', form = form)
-
-@app.route('/signup', methods = ['GET', 'POST'])
-def signup():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        # Adding the user to the database
-        hashed_password = sha256_crypt.hash(form.password.data)
-        user = User(
-            name = form.username.data,
-            passwd = hashed_password
-        )
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for('login'))
-    return render_template('signup.html', form = form)
-
-@app.route('/logout')
-def logout():
-    if current_user.is_authenticated:
-        logout_user()
-    return redirect(url_for('home'))
-
+from .routes import *
 from .models import *
+
+# ADMIN PAGE 
+    
+from .admin import *
+
+path = os.path.join(os.path.dirname(__file__), 'static')
+admin.add_view(SecuredFileView(path, '/static/', name = 'Static Files'))
+
+admin.add_view(SecuredModelView(User, db.session))
+
+admin.add_view(SubjectView(Subject, db.session))
+admin.add_view(SecuredModelView(SubjectAction, db.session))
+
+admin.add_view(SecuredModelView(JournalPage, db.session))
+admin.add_view(SecuredModelView(JournalPageItem, db.session))
+
+admin.add_view(SecuredModelView(HolidaysPlanning, db.session))
+admin.add_view(SecuredModelView(HolidaysPlanningItem, db.session))
+
+admin.add_view(SecuredModelView(WeekPlanning, db.session))
+admin.add_view(SecuredModelView(WeekPlanningItem, db.session))
+
+admin.add_view(SecuredModelView(Report, db.session))
