@@ -1,11 +1,25 @@
 {% extends 'base.html' %}
+{% set active_page = 'journal' -%}
 
 {% block title %}Journal{% endblock %}
 
-{% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
-{% endblock %}
-
 {% block content %}
-    {{ journal_pages }}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Page IDs</th>
+                <th scope="col">Content</th>
+                <th scope="col">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for page in journal_pages %}
+                <tr>
+                    <th scope="row">{{ page.id }}</th>
+                    <td>{{ page.content }}</td>
+                    <td>{{ page.date.strftime('%d/%m/%Y') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% set active_page = 'journal' %}
+
+{% block title %}Journal{% endblock %}
+
+{% block content %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Heures</th>
+                <th scope="col">{{ journal_page.date.strftime('%d/%m/%Y') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in journal_page.items %}
+                <tr>
+                    <th scope="row">{{ item.hour_start.strftime('%H:%M') }} - {{ item.hour_end.strftime('%H:%M') }}</th>
+                    <td>{{ item.content }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
