@@ -14,7 +14,7 @@
                         {{ form.username(id='username', class='form-control is-invalid') }}
                         <div>
                             {% for error in form.username.errors %}
-                                <div class="text-danger">{{ error }}</div>
+                                <div class="text-danger-emphasis">{{ error }}</div>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -27,7 +27,7 @@
                         {{ form.password(id='password', class='form-control is-invalid') }}
                         <div>
                             {% for error in form.password.errors %}
-                            <div class="text-danger">{{ error }}</div>
+                            <div class="text-danger-emphasis">{{ error }}</div>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -40,7 +40,7 @@
                         {{ form.confirm_password(id='confirm-password', class='form-control is-invalid') }}
                         <div>
                             {% for error in form.confirm_password.errors %}
-                                <div class="text-danger">{{ error }}</div>
+                                <div class="text-danger-emphasis">{{ error }}</div>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -53,7 +53,7 @@
                         {{ form.master_pwd(id='master-pwd', class='form-control is-invalid') }}
                         <div>
                             {% for error in form.master_pwd.errors %}
-                                <div class="text-danger">{{ error }}</div>
+                                <div class="text-danger-emphasis">{{ error }}</div>
                             {% endfor %}
                         </div>
                     {% else %}

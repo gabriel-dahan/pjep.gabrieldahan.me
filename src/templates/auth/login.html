@@ -14,7 +14,7 @@
                         {{ form.username(id='username', class='form-control is-invalid') }}
                         <div>
                             {% for error in form.username.errors %}
-                                <div class="text-danger">{{ error }}</div>
+                                <div class="text-danger-emphasis">{{ error }}</div>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -27,7 +27,7 @@
                         {{ form.password(id='password', class='form-control is-invalid') }}
                         <div>
                             {% for error in form.password.errors %}
-                            <div class="text-danger">{{ error }}</div>
+                            <div class="text-danger-emphasis">{{ error }}</div>
                             {% endfor %}
                         </div>
                     {% else %}

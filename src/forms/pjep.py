@@ -1,18 +1,47 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField, PasswordField, SubmitField
+    StringField, PasswordField, SubmitField, TimeField, SelectField
 )
 from wtforms.validators import (
     DataRequired, Length, EqualTo, ValidationError, Regexp
 )
 
 from .. import CONF
-from ..models import User
+from ..models import User, Subject
 
 from . import FormErrors
 
 USERNAME_MIN_LENGTH = 3
 USERNAME_MAX_LENGTH = 20
+
+class AddJournalPageItemForm(FlaskForm):
+    hour_start = TimeField(
+        'Heure de début', 
+        validators = [
+            DataRequired(FormErrors.FIELD_REQUIRED)
+        ]
+    )
+    hour_end = TimeField(
+        'Heure de fin', 
+        validators = [
+            DataRequired(FormErrors.FIELD_REQUIRED)
+        ]
+    )
+    subject = SelectField(
+        'Matière', 
+        validators = [
+            DataRequired(FormErrors.FIELD_REQUIRED),
+        ],
+    )
+    content = StringField(
+        'Description',
+        validators = [
+            DataRequired(FormErrors.FIELD_REQUIRED),
+        ]
+    )
+
+    submit = SubmitField('Ajouter')
+
 
 class AddJournalPageForm(FlaskForm):
     username = StringField(

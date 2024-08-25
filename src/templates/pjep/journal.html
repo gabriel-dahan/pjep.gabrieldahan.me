@@ -1,23 +1,25 @@
-{% extends 'base.html' %}
+{% extends 'pjep/journal_page.html' %}
 {% set active_page = 'journal' -%}
 
 {% block title %}Journal{% endblock %}
 
-{% block content %}
+{% block journal %}
+    <h2>Anciennes pages</h2>
     <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col">Page IDs</th>
-                <th scope="col">Content</th>
+                <th scope="col">ID</th>
+                <th scope="col">Description</th>
                 <th scope="col">Date</th>
             </tr>
         </thead>
         <tbody>
-            {% for page in journal_pages %}
-                <tr>
+            {% for page in journal_pages|sort(attribute = 'date', reverse = True) %}
+                {% set date = page.date.strftime('%d-%m-%Y') %}
+                <tr href="{{ url_for('journal_page', date=date) }}">
                     <th scope="row">{{ page.id }}</th>
                     <td>{{ page.content }}</td>
-                    <td>{{ page.date.strftime('%d/%m/%Y') }}</td>
+                    <td>{{ date }}</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% set active_page = 'journal' %}
+
+{% block title %}Journal{% endblock %}
+
+{% block content %}
+    <h1>{{ week_days[journal_page.date.weekday()] }} {{ journal_page.date.day }} {{ months[journal_page.date.month - 1]|lower }} {{ journal_page.date.year }}</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Heures</th>
+                <th scope="col">Matière</th>
+                <th scope="col">Description</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in journal_page.items|sort(attribute = 'hour_start') %}
+                <tr>
+                    <div style="display: none;" class="item-id-element" id="{{ item.id }}"></div>
+                    <th scope="row">{{ item.hour_start.strftime('%H:%M') }} - {{ item.hour_end.strftime('%H:%M') }}</th>
+                    <td>
+                        <div style="width: fit-content; padding: 3px 5px; border-radius: 10px; color: #000; background-color: #{{ item.subject.color }};">
+                            {{ item.subject.name }}
+                        </div>
+                    </td>
+                    <td>{{ item.content }}</td>
+                    <td>
+                        <button class="edit-btn btn bg-transparent p-0">
+                            <img src="{{ url_for('static', filename='edit_icon.svg') }}" alt="Edit" class="w-50">
+                        </button>
+                        <button class="delete-btn btn bg-transparent p-0">
+                            <img src="{{ url_for('static', filename='delete_icon.svg') }}" alt="Delete" class="w-50">
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form method="POST" action="" novalidate class="w-100" id="page-items-form">
+        {{ form.hidden_tag() }}
+        <div class="form-fields">
+            <div class="input-group mb-3">
+                <span class="input-group-text">Heures</span>
+                {% if form.hour_start.errors %}
+                    {{ form.hour_start(id='hour-start', class='form-control is-invalid timepicker') }}
+                    <div>
+                        {% for error in form.hour_start.errors %}
+                            <div class="text-danger-emphasis">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.hour_start(id='hour-start', class='form-control timepicker') }}
+                {% endif %}
+                <span class="input-group-text">-</span>
+                {% if form.hour_end.errors %}
+                    {{ form.hour_end(id='hour-end', class='form-control is-invalid timepicker') }}
+                    <div>
+                        {% for error in form.hour_end.errors %}
+                        <div class="text-danger-emphasis">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.hour_end(id='hour-end', class='form-control timepicker') }}
+                {% endif %}
+                <span class="input-group-text">Matière</span>
+                {% if form.subject.errors %}
+                    {{ form.subject(id='subject', class='form-control is-invalid') }}
+                    <div>
+                        {% for error in form.subject.errors %}
+                            <div class="text-danger-emphasis">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.subject(id='subject', class='form-control') }}
+                {% endif %}
+                <span class="input-group-text">Description</span>
+                {% if form.content.errors %}
+                    {{ form.content(id='content', class='form-control is-invalid') }}
+                    <div>
+                        {% for error in form.content.errors %}
+                            <div class="text-danger-emphasis">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.content(id='content', class='form-control') }}
+                {% endif %}
+                
+                {{ form.submit(class="btn btn-primary", id='submit') }}
+            </div>
+        </div>
+    </form>
+    <div>
+        <button class="btn btn-outline-danger" href="{{ url_for('journal_page', date=journal_page.date.strftime('%d-%m-%Y')) }}">Retour</button>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+
+        const getItemIDFromButton = btn => parseInt(btn.parentElement.parentElement.querySelector('.item-id-element').id);
+
+        const editBtns = document.querySelectorAll('edit-btn');
+
+        const hourStartInput = document.querySelectorAll('#hour-start');
+        const hourEndInput = document.querySelectorAll('#hour-end');
+        const subjectInput = document.querySelectorAll('#subject');
+        const contentInput = document.querySelectorAll('#content');
+        const submitBtn = document.querySelectorAll('#submit');
+
+        editBtns.forEach(btn => {
+            let itemId = getItemIDFromButton(btn);
+            btn.onclick = () => {
+                
+            }
+        });
+    </script>
+{% endblock %}

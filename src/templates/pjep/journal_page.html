@@ -1,23 +1,43 @@
 {% extends 'base.html' %}
-{% set active_page = 'journal' %}
+{% set active_page = 'journal' -%}
 
 {% block title %}Journal{% endblock %}
 
 {% block content %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Heures</th>
-                <th scope="col">{{ journal_page.date.strftime('%d/%m/%Y') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in journal_page.items %}
+    <h2>{{ week_days[journal_page.date.weekday()] }} {{ journal_page.date.day }} {{ months[journal_page.date.month - 1]|lower }} {{ journal_page.date.year }}</h2>
+    {% if not journal_page %}
+        <table class="table table-hover">
+            <thead>
                 <tr>
-                    <th scope="row">{{ item.hour_start.strftime('%H:%M') }} - {{ item.hour_end.strftime('%H:%M') }}</th>
-                    <td>{{ item.content }}</td>
+                    <th scope="col">Heures</th>
+                    <th scope="col">Matière</th>
+                    <th scope="col">Description</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for item in journal_page.items|sort(attribute = 'hour_start') %}
+                    <tr>
+                        <th scope="row">{{ item.hour_start.strftime('%H:%M') }} - {{ item.hour_end.strftime('%H:%M') }}</th>
+                        <td>
+                            <div style="width: fit-content; padding: 3px 5px; border-radius: 10px; color: #000; background-color: #{{ item.subject.color }};">
+                                {{ item.subject.name }}
+                            </div>
+                        </td>
+                        <td>{{ item.content }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div>
+            <button class="btn btn-primary" href="{{ url_for('journal_page_edit', date=journal_page.date.strftime('%d-%m-%Y')) }}">Modifier la page</button>
+        </div>
+    {% else %}
+        <p>Aucun journal n'a encore été créé à cette date.</p>
+        <div>
+            <button class="btn btn-primary">Ajouter une page</button>
+        </div>
+    {% endif %}
+
+    {% block journal %}
+    {% endblock %}
 {% endblock %}
