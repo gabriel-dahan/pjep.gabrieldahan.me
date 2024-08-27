@@ -1,7 +1,8 @@
 {% set navigation_bar = [
     ('/', 'home', 'Home'),
     ('/journal', 'journal', 'Journal'),
-    ('/plans', 'plannings', 'Plannings')
+    ('/plans', 'plannings', 'Plannings'),
+    ('/reports', 'reports', 'Bilans')
 ] -%}
 
 {% set active_page = active_page -%}
@@ -23,7 +24,7 @@
         {% endblock head %}
     </head>
     <body class="d-flex" style="height: 100vh">
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark-subtle" style="width: 280px;">
             <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 <div class="d-flex flex-column">
                     <span class="fs-4">PJEP</span>
@@ -31,20 +32,34 @@
                 </div>
             </a>
             <hr>
-            <ul class="nav nav-pills flex-column mb-auto">
+            <ul class="nav nav-pills flex-column mb-auto gap-2">
                 {% for href, id, name in navigation_bar %}
-                    <li>
+                    <li class="nav-item">
                         {% if id == active_page %}
                             <a href="{{ href }}" class="nav-link active">
                                 {{ name }}
                             </a>
                         {% else %}
-                            <a href="{{ href }}" class="nav-link text-white">
+                            <a  href="{{ href }}" class="nav-link text-white">
                                 {{ name }}
                             </a>
                         {% endif %}
                     </li>
                 {% endfor %}
+            </ul>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    {% if active_page == 'stats' %}
+                        <a href="{{ url_for('statistics') }}" class="nav-link active">
+                            Statistiques
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('statistics') }}" class="nav-link text-white">
+                            Statistiques
+                        </a>
+                    {% endif %}
+                </li>
             </ul>
             <hr>
             <div class="dropdown">
@@ -87,6 +102,18 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
         <script>
+            // NavLinks hover
+            const navLinks = document.querySelectorAll('.nav .nav-item .nav-link');
+            navLinks.forEach(link => {
+                link.style.border = '1px solid transparent';
+                link.addEventListener('mouseover', e => {
+                    link.classList.add('border-light-subtle');
+                });
+                link.addEventListener('mouseout', e => {
+                    link.classList.remove('border-light-subtle');
+                });
+            });
+
             // Hyperlink <tr> && <button> :
             const clickableElements = document.querySelectorAll('tr, button');
             clickableElements.forEach(element => {

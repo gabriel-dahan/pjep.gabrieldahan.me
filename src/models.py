@@ -12,7 +12,7 @@ class Subject(db.Model):
     id: int = db.Column(db.Integer, primary_key = True)
 
     name: str = db.Column(db.String(15), unique = True, nullable = False)
-    teacher: str = db.Column(db.String(20), nullable = False)
+    teacher: str = db.Column(db.String(20))
     color: str = db.Column(db.String(6), nullable = False) # HEX Color
 
     # FOREIGN KEYS

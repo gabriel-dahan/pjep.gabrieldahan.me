@@ -4,7 +4,7 @@
 {% block title %}Journal{% endblock %}
 
 {% block content %}
-    <h1>{{ week_days[journal_page.date.weekday()] }} {{ journal_page.date.day }} {{ months[journal_page.date.month - 1]|lower }} {{ journal_page.date.year }}</h1>
+    <h1>{{ week_days[page.date.weekday()] }} {{ page.date.day }} {{ months[page.date.month - 1]|lower }} {{ page.date.year }}</h1>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -15,9 +15,8 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in journal_page.items|sort(attribute = 'hour_start') %}
-                <tr>
-                    <div style="display: none;" class="item-id-element" id="{{ item.id }}"></div>
+            {% for item in page.items|sort(attribute = 'hour_start') %}
+                <tr id="{{ item.id }}">
                     <th scope="row">{{ item.hour_start.strftime('%H:%M') }} - {{ item.hour_end.strftime('%H:%M') }}</th>
                     <td>
                         <div style="width: fit-content; padding: 3px 5px; border-radius: 10px; color: #000; background-color: #{{ item.subject.color }};">
@@ -37,7 +36,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <form method="POST" action="" novalidate class="w-100" id="page-items-form">
+    <form method="POST" action="" novalidate class="w-100 focus-ring" id="page-items-form">
         {{ form.hidden_tag() }}
         <div class="form-fields">
             <div class="input-group mb-3">
@@ -86,32 +85,41 @@
                     {{ form.content(id='content', class='form-control') }}
                 {% endif %}
                 
-                {{ form.submit(class="btn btn-primary", id='submit') }}
+                {{ form.submit(class="btn btn-primary focus-ring", id='submit') }}
             </div>
         </div>
     </form>
     <div>
-        <button class="btn btn-outline-danger" href="{{ url_for('journal_page', date=journal_page.date.strftime('%d-%m-%Y')) }}">Retour</button>
+        <button class="btn btn-outline-danger" href="{{ url_for('journal_page', date=page.date.strftime('%d-%m-%Y')) }}">Retour</button>
     </div>
 {% endblock %}
 
 {% block scripts %}
     <script>
 
-        const getItemIDFromButton = btn => parseInt(btn.parentElement.parentElement.querySelector('.item-id-element').id);
+        const getItemIDFromButton = btn => parseInt(btn.parentElement.parentElement.id);
 
-        const editBtns = document.querySelectorAll('edit-btn');
+        let currentMethod = 'GET';
 
-        const hourStartInput = document.querySelectorAll('#hour-start');
-        const hourEndInput = document.querySelectorAll('#hour-end');
-        const subjectInput = document.querySelectorAll('#subject');
-        const contentInput = document.querySelectorAll('#content');
-        const submitBtn = document.querySelectorAll('#submit');
+        const editBtns = document.querySelectorAll('.edit-btn');
+
+        const hourStartInput = document.querySelector('#hour-start');
+        const hourEndInput = document.querySelector('#hour-end');
+        const subjectInput = document.querySelector('#subject');
+        const contentInput = document.querySelector('#content');
+        const submitBtn = document.querySelector('#submit');
 
         editBtns.forEach(btn => {
             let itemId = getItemIDFromButton(btn);
             btn.onclick = () => {
-                
+                hourStartInput.value = '09:59';
+                hourEndInput.value = '10:20';
+                subjectInput.value = '3';
+                contentInput.value = 'Description...';
+
+                submitBtn.value = 'Modifier'
+                submitBtn.focus();
+                currentMethod = 'PUT';
             }
         });
     </script>

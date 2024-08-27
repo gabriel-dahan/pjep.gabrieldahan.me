@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% set active_page = 'journal' -%}
+
+{% block title %}Journal{% endblock %}
+
+{% set current_date = now() %}
+
+{% block content %}
+    <div class="container p-3 d-flex flex-column align-items-center justify-content-center gap-3">
+        {% if page %}
+            {% if page.date.date() == current_date.date() %}
+                <div class="d-flex flex-column align-items-center">
+                    <h2>Aujourd'hui</h2>
+                    <h4>{{ week_days[page.date.weekday()]|lower }} {{ page.date.day }} {{ months[page.date.month - 1]|lower }} {{ page.date.year }}</h4>
+                </div>
+            {% else %}
+                <h2>{{ week_days[page.date.weekday()] }} {{ page.date.day }} {{ months[page.date.month - 1]|lower }} {{ page.date.year }}</h2>
+            {% endif %}
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Heures</th>
+                        <th scope="col">Matière</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in page.items|sort(attribute = 'hour_start') %}
+                        <tr>
+                            <th scope="row">{{ item.hour_start.strftime('%H:%M') }} - {{ item.hour_end.strftime('%H:%M') }}</th>
+                            <td>
+                                <div style="width: fit-content; padding: 3px 5px; border-radius: 10px; font-size: 15px; font-weight: 500; color: #000; background-color: #{{ item.subject.color }};">
+                                    {{ item.subject.name }}
+                                </div>
+                            </td>
+                            <td>{{ item.content }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div>
+                <button class="btn btn-primary" href="{{ url_for('journal_page_edit', date=page.date.strftime('%d-%m-%Y')) }}">Modifier la page</button>
+            </div>
+        
+        {% else %}
+            <div class="d-flex flex-column align-items-center">
+                <h2>Aujourd'hui</h2>
+                <h4>{{ week_days[current_date.weekday()]|lower }} {{ current_date.day }} {{ months[current_date.month - 1]|lower }} {{ current_date.year }}</h4>
+            </div>
+            <p>Aucune page du journal n'a encore été créée...</p>
+            <div>
+                <button class="btn btn-sm btn-outline-light" href="{{ url_for('journal_new_page') }}">Ajouter une page</button>
+            </div>
+        {% endif %}
+    </div>
+    <div class="container p-3 d-flex flex-column align-items-center justify-content-center gap-3">
+        {% block journal %}
+        {% endblock %}
+    </div>
+{% endblock %}

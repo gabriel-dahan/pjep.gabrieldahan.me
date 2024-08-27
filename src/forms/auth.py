@@ -9,7 +9,7 @@ from wtforms.validators import (
 from .. import CONF
 from ..models import User
 
-from . import FormErrors
+from . import FormErrors, render_kw_submit, render_kw
 
 USERNAME_MIN_LENGTH = 3
 USERNAME_MAX_LENGTH = 20
@@ -39,28 +39,32 @@ class RegistrationForm(FlaskForm):
                 '^([a-zA-Z0-9]|_)+$', 
                 message = 'Le nom d\'utilisateur ne peut que contenir des lettres, chiffres et underscore.'
             )
-        ]
+        ],
+        render_kw = render_kw
     )
     password = PasswordField(
         'Mot de passe', 
-        validators = [DataRequired(FormErrors.FIELD_REQUIRED),]
+        validators = [DataRequired(FormErrors.FIELD_REQUIRED),],
+        render_kw = render_kw
     )
     confirm_password = PasswordField(
         'Confirmer le mot de passe', 
         validators = [
             DataRequired(FormErrors.FIELD_REQUIRED),
             EqualTo('password', FormErrors.PASSWORD_DOESNT_MATCH),
-        ]
+        ],
+        render_kw = render_kw
     )
 
     master_pwd = PasswordField(
         'Master key',
         validators = [
             DataRequired(FormErrors.FIELD_REQUIRED),
-        ]
+        ],
+        render_kw = render_kw
     )
 
-    submit = SubmitField('S\'enregistrer')
+    submit = SubmitField('S\'enregistrer', render_kw = render_kw_submit)
 
     def validate_username(self, username):
         if user := User.query.filter_by(name = username.data).first():
@@ -75,15 +79,17 @@ class LoginForm(FlaskForm):
         'Nom d\'utilisateur', 
         validators = [
             DataRequired(FormErrors.FIELD_REQUIRED), 
-        ]
+        ],
+        render_kw = render_kw
     )
 
     password = PasswordField(
         'Mot de passe', 
-        validators = [DataRequired(FormErrors.FIELD_REQUIRED),]
+        validators = [DataRequired(FormErrors.FIELD_REQUIRED),],
+        render_kw = render_kw
     )
 
-    submit = SubmitField('Se connecter')
+    submit = SubmitField('Se connecter', render_kw = render_kw_submit)
 
     def validate_username(self, username):
         if not User.query.filter_by(name = username.data).first():
@@ -105,23 +111,27 @@ class EditProfileForm(FlaskForm):
                 '^([a-zA-Z0-9]|_)+$', 
                 message = 'Le nouveau nom d\'utilisateur ne peut que contenir des lettres, chiffres et underscore.'
             )
-        ]
+        ],
+        render_kw = render_kw
     )
 
     password = PasswordField(
         'Mot de passe actuel',
-        validators = [DataRequired(FormErrors.FIELD_REQUIRED),]
+        validators = [DataRequired(FormErrors.FIELD_REQUIRED),],
+        render_kw = render_kw
     )
 
     new_password = PasswordField(
         'Nouveau mot de passe',
+        render_kw = render_kw
     )
 
     confirm_password = PasswordField(
         'Confirmer le mot de passe', 
         validators = [
             EqualTo('new_password', FormErrors.PASSWORD_DOESNT_MATCH),
-        ]
+        ],
+        render_kw = render_kw
     )
 
-    submit = SubmitField('Modifier le profil')
+    submit = SubmitField('Modifier le profil', render_kw = render_kw_submit)

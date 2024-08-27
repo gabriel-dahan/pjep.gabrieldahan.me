@@ -1,5 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_cors import CORS
 
@@ -25,6 +26,9 @@ __cors = CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = CONF['DB_URI']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+# MIGRATE
+migrate = Migrate(app, db)
 
 # LOGIN MANAGER
 login_manager = LoginManager(app)

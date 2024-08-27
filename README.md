@@ -1,1 +1,1 @@
-*__PJEP__ - En construction...*
+*__PJEP__ - En construction...* : Voir la description du projet sur mes [pages](https://pages.gabrieldahan.me/).

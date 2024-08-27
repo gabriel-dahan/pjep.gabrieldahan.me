@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% set active_page = 'journal' %}
+
+{% block title %}New Page{% endblock %}
+
+{% set current_date = now() %}
+
+{% block content %}
+    <div class="d-flex flex-column w-75">
+        <h3 class="text-center">Créer une nouvelle page</h3>
+        <form method="POST" action="" novalidate>
+            {{ form.hidden_tag() }}
+            <p class="text-center">Ajoutez une nouvelle page à votre journal !</p>
+            <div class="form-fields">
+                {% for field in form %}
+                    {% if field.type not in ['SubmitField', 'HiddenField', 'CSRFTokenField'] %}
+                        {% set field_class = field.render_kw.class_ -%}
+                        <div class="form-floating mb-3">
+                            {% if field.errors %}
+                                {{ field(class = field_class + ' is-invalid') }}
+                                <div>
+                                    {% for error in field.errors %}
+                                        <div class="text-danger-emphasis">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            <label class="form-label">{{ field.label }}</label>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <div class="submit d-grid">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
