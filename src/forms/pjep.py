@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField, DateField, SubmitField, TimeField, SelectField
+    StringField, DateField, SubmitField, TimeField, SelectField, HiddenField
 )
 from wtforms.validators import (
     DataRequired
@@ -15,7 +15,11 @@ now = datetime.now
 USERNAME_MIN_LENGTH = 3
 USERNAME_MAX_LENGTH = 20
 
-class AddJournalPageItemForm(FlaskForm):
+class EditJournalPageItemForm(FlaskForm):
+
+    item_id = HiddenField('ItemID') # Used for PUT and DELETE methods.
+    method = HiddenField('Method') # Used to deal with PUT and DELETE methods.
+
     hour_start = TimeField(
         'Heure de début', 
         validators = [

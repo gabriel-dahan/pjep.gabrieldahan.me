@@ -17,13 +17,15 @@
         <tbody>
             {% for item in page.items|sort(attribute = 'hour_start') %}
                 <tr id="{{ item.id }}">
-                    <th scope="row">{{ item.hour_start.strftime('%H:%M') }} - {{ item.hour_end.strftime('%H:%M') }}</th>
+                    <th scope="row">
+                        <span class="hour-start">{{ item.hour_start.strftime('%H:%M') }}</span> - <span class="hour-end">{{ item.hour_end.strftime('%H:%M') }}</span>
+                    </th>
                     <td>
-                        <div style="width: fit-content; padding: 3px 5px; border-radius: 10px; color: #000; background-color: #{{ item.subject.color }};">
+                        <div class="subject" style="width: fit-content; padding: 3px 5px; border-radius: 10px; font-size: 15px; font-weight: 500; color: #000; background-color: #{{ item.subject.color }};" data-subject="{{ item.subject.id }}">
                             {{ item.subject.name }}
                         </div>
                     </td>
-                    <td>{{ item.content }}</td>
+                    <td class="content">{{ item.content }}</td>
                     <td>
                         <button class="edit-btn btn bg-transparent p-0">
                             <img src="{{ url_for('static', filename='edit_icon.svg') }}" alt="Edit" class="w-50">
@@ -38,8 +40,8 @@
     </table>
     <form method="POST" action="" novalidate class="w-100 focus-ring" id="page-items-form">
         {{ form.hidden_tag() }}
-        <div class="form-fields">
-            <div class="input-group mb-3">
+        <div class="form-fields d-flex gap-2 align-items-center justify-content-center">
+            <div class="input-group">
                 <span class="input-group-text">Heures</span>
                 {% if form.hour_start.errors %}
                     {{ form.hour_start(id='hour-start', class='form-control is-invalid timepicker') }}
@@ -87,6 +89,7 @@
                 
                 {{ form.submit(class="btn btn-primary focus-ring", id='submit') }}
             </div>
+            <button class="btn btn-danger d-none" id="cancel" name="cancel" type="button">Annuler</button>
         </div>
     </form>
     <div>
@@ -96,31 +99,96 @@
 
 {% block scripts %}
     <script>
+        const getItemFromButton = btn => {
+            const tr = btn.parentNode.parentNode;
+            return {
+                id: parseInt(tr.id),
+                hourStart: tr.querySelector('.hour-start').innerText,
+                hourEnd: tr.querySelector('.hour-end').innerText,
+                subjectId: parseInt(tr.querySelector('.subject').getAttribute('data-subject')),
+                subject: tr.querySelector('.subject').innerText,
+                content: tr.querySelector('.content').innerText
+            }
+        };
 
-        const getItemIDFromButton = btn => parseInt(btn.parentElement.parentElement.id);
-
-        let currentMethod = 'GET';
+        let currentMethod = 'POST';
 
         const editBtns = document.querySelectorAll('.edit-btn');
+        const deleteBtns = document.querySelectorAll('.delete-btn');
 
-        const hourStartInput = document.querySelector('#hour-start');
-        const hourEndInput = document.querySelector('#hour-end');
-        const subjectInput = document.querySelector('#subject');
-        const contentInput = document.querySelector('#content');
-        const submitBtn = document.querySelector('#submit');
+        const form = document.getElementById('page-items-form');
+        const cancelBtn = document.getElementById('cancel');
+
+        const itemIdInput = document.getElementById('item_id');
+        const methodInput = document.getElementById('method');
+
+        const hourStartInput = document.getElementById('hour-start');
+        const hourEndInput = document.getElementById('hour-end');
+        const subjectInput = document.getElementById('subject');
+        const contentInput = document.getElementById('content');
+        const submitBtn = document.getElementById('submit');
 
         editBtns.forEach(btn => {
-            let itemId = getItemIDFromButton(btn);
-            btn.onclick = () => {
-                hourStartInput.value = '09:59';
-                hourEndInput.value = '10:20';
-                subjectInput.value = '3';
-                contentInput.value = 'Description...';
+            const item = getItemFromButton(btn);
 
-                submitBtn.value = 'Modifier'
+            btn.onclick = () => {
+                itemIdInput.value = item.id;
+
+                hourStartInput.value = item.hourStart;
+                hourEndInput.value = item.hourEnd;
+                subjectInput.value = item.subjectId;
+                contentInput.value = item.content;
+
+                submitBtn.value = 'Modifier';
                 submitBtn.focus();
+
+                cancelBtn.classList.remove('d-none');
+
                 currentMethod = 'PUT';
+                methodInput.value = currentMethod;
             }
         });
+
+        deleteBtns.forEach(btn => {
+            const item = getItemFromButton(btn);
+
+            btn.onclick = () => {
+                itemIdInput.value = item.id;
+
+                hourStartInput.value = item.hourStart;
+                hourEndInput.value = item.hourEnd;
+                subjectInput.value = item.subjectId;
+                contentInput.value = item.content;
+                [hourStartInput, hourEndInput, subjectInput, contentInput].forEach(input => {
+                    input.style.color = 'rgb(171, 171, 171)';
+                    input.style.backgroundColor = 'var(--bs-secondary-bg)';
+                    input.setAttribute('readonly', '');
+                })
+
+                submitBtn.value = 'Supprimer';
+                submitBtn.focus();
+
+                cancelBtn.classList.remove('d-none');
+
+                currentMethod = 'DELETE';
+                methodInput.value = currentMethod;
+            }
+        });
+
+        cancelBtn.onclick = () => {
+            [hourStartInput, hourEndInput, subjectInput, contentInput].forEach(input => {
+                input.value = '';
+                input.style.color = '#fff';
+                input.style.backgroundColor = 'var(--bs-body-bg)';
+                input.removeAttribute('readonly');
+            })
+
+            submitBtn.value = 'Ajouter';
+            
+            cancelBtn.classList.add('d-none');
+
+            currentMethod = 'POST';
+            methodInput.value = currentMethod;
+        }
     </script>
 {% endblock %}

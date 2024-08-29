@@ -1,11 +1,14 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, send_file
 from flask_login import current_user, login_required
 from sqlalchemy.sql import func
 
 from .. import app, db
-from ..models import JournalPage, Subject
-from ..forms import AddJournalPageItemForm, AddJournalPageForm
+from ..models import JournalPage, Subject, JournalPageItem
+from ..forms import EditJournalPageItemForm, AddJournalPageForm
 
+from ..utils import html_to_pdf
+
+import io
 from datetime import datetime
 
 @app.route('/')
@@ -56,9 +59,8 @@ def journal_page(date: str): # date format : dd-mm-yyyy
 @app.route('/journal/<date>/edit', methods = ['GET', 'POST', 'PUT', 'DELETE'])
 @login_required
 def journal_page_edit(date: str):
-    method = request.method
     date_obj = datetime.strptime(date, '%d-%m-%Y')
-    page = JournalPage.query \
+    page: JournalPage = JournalPage.query \
         .filter_by(author_id = current_user.get_id()) \
         .filter(func.date(JournalPage.date) == date_obj.date()) \
         .first()
@@ -66,14 +68,68 @@ def journal_page_edit(date: str):
     choices = [
         (subject.id, subject.name) for subject in Subject.query.all()
     ]
-    add_item_form = AddJournalPageItemForm()
+    add_item_form = EditJournalPageItemForm()
     add_item_form.subject.choices = choices
     if page:
+        if add_item_form.validate_on_submit():
+            method = add_item_form.method.data or 'POST'
+
+            hour_start = datetime.combine(page.date, add_item_form.hour_start.data)
+            hour_end = datetime.combine(page.date, add_item_form.hour_end.data)
+            content = add_item_form.content.data
+            subject_id = int(add_item_form.subject.data)
+            journal_id = page.id
+
+            if method == 'POST':
+                new_item = JournalPageItem(
+                    hour_start = hour_start,
+                    hour_end = hour_end,
+                    content = content,
+                    subject_id = subject_id,
+                    journal_id = journal_id
+                )
+                db.session.add(new_item)
+                db.session.commit()
+            elif method == 'PUT':
+                item = JournalPageItem.query.filter_by(id = int(add_item_form.item_id.data)).first()
+                if item:
+                    item.hour_start = hour_start
+                    item.hour_end = hour_end
+                    item.content = content
+                    item.subject_id = subject_id
+                    db.session.commit()
+            elif method == 'DELETE':
+                item = JournalPageItem.query.filter_by(id = int(add_item_form.item_id.data)).first()
+                if item:
+                    db.session.delete(item)
+                    db.session.commit()
         return render_template('pjep/journal/page_edit.html', 
             page = page, 
             form = add_item_form
         )
     return render_template('404.html')
+
+@app.route('/journal/raw')
+@login_required
+def journal_raw():
+    pages = JournalPage.query.filter_by(author_id = current_user.get_id()).all()
+    return render_template('pjep/journal/raw.html', pages = pages)
+
+@app.route('/journal/raw/pdf')
+@login_required
+def journal_raw_pdf():
+    pages = JournalPage.query.filter_by(author_id = current_user.get_id()).all()
+    pdf = html_to_pdf('pjep/journal/raw.html', pages = pages)
+
+    if not pdf:
+        return "Erreur lors de la création du PDF", 500
+    
+    return send_file(
+        pdf,
+        mimetype = 'application/pdf',
+        download_name = 'journal.pdf',
+        as_attachment = False
+    )
 
 @app.route('/plans')
 @login_required

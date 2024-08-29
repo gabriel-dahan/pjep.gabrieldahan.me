@@ -2,3 +2,4 @@
 - Informations en cliquant sur une matière (prof, etc.).
 - Mettre en place les actions correspondant aux matières.
 - Objectifs et outils de statistiques par rapport à ces objectifs.
+- Home TODO list rapide.

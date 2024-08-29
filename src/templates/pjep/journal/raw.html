@@ -1,0 +1,44 @@
+<!-- USED FOR DOWNLOADS, 
+    consists in a simple HTML template with minimal bootstrap to download as a PDF with every journal page. -->
+
+{% set current_date = now() %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Raw Journal</title>
+    </head>
+    <body>
+        {% for page in pages|sort(attribute = 'date') %}
+            <div class="page">
+                <h2>{{ week_days[page.date.weekday()] }} {{ page.date.day }} {{ months[page.date.month - 1]|lower }} {{ page.date.year }}</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Heures</th>
+                            <th scope="col">Matière</th>
+                            <th scope="col">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in page.items|sort(attribute = 'hour_start') %}
+                            <tr style="background-color: #{{ item.subject.color }};">
+                                <th scope="row">{{ item.hour_start.strftime('%H:%M') }} - {{ item.hour_end.strftime('%H:%M') }}</th>
+                                <td style="text-align: center;">
+                                    <span style="width: fit-content; padding: 3px 5px; border-radius: 10px; color: #000; text-align: center;">
+                                        {{ item.subject.name }}
+                                    </span>
+                                </td>
+                                <td style="text-align: center;">{{ item.content }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <br />
+        {% endfor %}
+    </body>
+</html>
