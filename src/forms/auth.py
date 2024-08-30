@@ -1,3 +1,4 @@
+from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, PasswordField, SubmitField
@@ -11,16 +12,10 @@ from ..models import User
 
 from . import FormErrors, render_kw_submit, render_kw
 
+from passlib.hash import sha256_crypt
+
 USERNAME_MIN_LENGTH = 3
 USERNAME_MAX_LENGTH = 20
-
-class FormErrors:
-
-    FIELD_REQUIRED = "Ce champ est requis."
-    INVALID_LENGTH = "Le nom d'utilisateur doit être compris entre {min} et {max} caractères."
-    PASSWORD_DOESNT_MATCH = "Les mots de passe ne correspondent pas."
-    USERNAME_ALREADY_EXISTS = "Ce nom d'utilisateur existe déjà."
-    USERNAME_DOESNT_EXISTS = "Ce nom d'utilisateur n'existe pas."
 
 class RegistrationForm(FlaskForm):
     username = StringField(
@@ -90,11 +85,22 @@ class LoginForm(FlaskForm):
     )
 
     submit = SubmitField('Se connecter', render_kw = render_kw_submit)
-
-    def validate_username(self, username):
-        if not User.query.filter_by(name = username.data).first():
-            raise ValidationError(FormErrors.USERNAME_DOESNT_EXISTS)
-
+        
+    def validate(self, extra_validators = None):
+        initial_validation = super(LoginForm, self).validate(extra_validators)
+        if not initial_validation:
+            return False
+        
+        user: User = User.query.filter_by(name = self.username.data).first()
+        if not user:
+            self.username.errors.append(FormErrors.USERNAME_DOESNT_EXISTS)
+            return False
+        
+        if not sha256_crypt.verify(self.password.data, user.passwd):
+            self.password.errors.append(FormErrors.INVALID_PASSWORD)
+            return False
+        return True
+        
 class EditProfileForm(FlaskForm):
     username = StringField(
         'Nouveau nom d\'utilisateur', 
@@ -135,3 +141,14 @@ class EditProfileForm(FlaskForm):
     )
 
     submit = SubmitField('Modifier le profil', render_kw = render_kw_submit)
+
+    def validate(self, extra_validators = None):
+        initial_validation = super(EditProfileForm, self).validate(extra_validators)
+        if not initial_validation:
+            return False
+        
+        user: User = User.query.filter_by(id = current_user.get_id()).first()
+        if not sha256_crypt.verify(self.password.data, user.passwd):
+            self.password.errors.append(FormErrors.INVALID_PASSWORD)
+            return False
+        return True

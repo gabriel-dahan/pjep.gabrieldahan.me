@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit profile - PJEP{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-column w-75">
+        <h3 class="text-center">Modifier son profil</h3>
+        <form method="POST" action="" novalidate>
+            {{ form.hidden_tag() }}
+            <p class="text-center">Vous voulez changer de mot de passe ou de nom d'utilisateur ? C'est ici ! <br> Laissez blanc pour ne pas changer.</p>
+            <div class="form-fields">
+                {% for field in form %}
+                    {% if field.type not in ['SubmitField', 'HiddenField', 'CSRFTokenField'] %}
+                        {% set field_class = field.render_kw.class_ -%}
+                        <div class="form-floating mb-3">
+                            {% if field.errors %}
+                                {{ field(class = field_class + ' is-invalid') }}
+                                <div>
+                                    {% for error in field.errors %}
+                                        <div class="text-danger-emphasis">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            <label class="form-label">{{ field.label }}</label>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <div class="submit d-grid">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
