@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from sqlalchemy.sql import func
 
 from .. import app, db
-from ..models import JournalPage, Subject, JournalPageItem
+from ..models import JournalPage, Subject, JournalPageItem, Report
 from ..forms import EditJournalPageItemForm, AddJournalPageForm
 
 from ..utils import html_to_pdf
@@ -144,4 +144,11 @@ def holidays_plannings():
 @app.route('/reports')
 @login_required
 def reports():
-    return render_template('pjep/reports.html')
+    reports = Report.query.filter_by(author_id = current_user.get_id()).all()
+    return render_template('pjep/reports.html', reports = reports)
+
+@app.route('/subjects')
+@login_required
+def subjects():
+    subjects_ = Subject.query.filter_by(user = current_user).all()
+    return render_template('pjep/subjects.html', subjects = subjects_)

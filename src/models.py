@@ -60,7 +60,7 @@ class JournalPage(db.Model):
     items = db.relationship('JournalPageItem', backref = 'journal', lazy = True) # One-to-Many
 
     def __repr__(self) -> str:
-        return f'JournalPage(date: {self.date.strftime('%d/%m/%Y')})'
+        return f'JournalPage(date: {self.date.strftime("%d/%m/%Y")})'
 
 class JournalPageItem(db.Model):
     __tablename__ = 'journal_pages_items'
@@ -77,7 +77,7 @@ class JournalPageItem(db.Model):
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
 
     def __repr__(self) -> str:
-        return f'JournalPageItem(date: {self.journal.date.strftime('%d/%m/%Y')}, hour_start: {self.hour_start.strftime('%H:%M')}, hour_end: {self.hour_end.strftime('%H:%M')}, content: {self.content})'
+        return f'JournalPageItem(date: {self.journal.date.strftime("%d/%m/%Y")}, hour_start: {self.hour_start.strftime("%H:%M")}, hour_end: {self.hour_end.strftime("%H:%M")}, content: {self.content})'
 
 ###### HOLIDAYS PLANNING ######
 
@@ -96,7 +96,7 @@ class HolidaysPlanning(db.Model):
     items = db.relationship('HolidaysPlanningItem', backref = 'planning', lazy = True) # One-to-Many
 
     def __repr__(self) -> str:
-        return f'HolidaysPlanning(date_start: {self.date_start.strftime('%d/%m/%Y')}, date_end: {self.date_end.strftime('%d/%m/%Y')})'
+        return f'HolidaysPlanning(date_start: {self.date_start.strftime("%d/%m/%Y")}, date_end: {self.date_end.strftime("%d/%m/%Y")})'
 
 class HolidaysPlanningItem(db.Model):
     __tablename__ = 'holidays_plannings_items'
@@ -112,7 +112,7 @@ class HolidaysPlanningItem(db.Model):
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
 
     def __repr__(self) -> str:
-        return f'HolidaysPlanningItem(time_spent: {self.time_spent.strftime('%H:%M')}, content: {self.content}, achieved: {self.achieved})'
+        return f'HolidaysPlanningItem(time_spent: {self.time_spent.strftime("%H:%M")}, content: {self.content}, achieved: {self.achieved})'
 
 ###### WEEK PLANNING ######
     
@@ -131,7 +131,7 @@ class WeekPlanning(db.Model):
     items = db.relationship('WeekPlanningItem', backref = 'planning', lazy = True) # One-to-Many
 
     def __repr__(self) -> str:
-        return f'WeekPlanning(date_start: {self.date_start.strftime('%d/%m/%Y')}, date_end: {self.date_end.strftime('%d/%m/%Y')})'
+        return f'WeekPlanning(date_start: {self.date_start.strftime("%d/%m/%Y")}, date_end: {self.date_end.strftime("%d/%m/%Y")})'
 
 class WeekPlanningItem(db.Model):
     __tablename__ = 'week_plannings_items'
@@ -148,7 +148,7 @@ class WeekPlanningItem(db.Model):
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable = False)
 
     def __repr__(self) -> str:
-        return f'WeekPlanningItem(hour_start: {self.hour_start.strftime('%H:%M')}, hour_end: {self.hour_end.strftime('%H:%M')}, content: {self.content})'
+        return f'WeekPlanningItem(hour_start: {self.hour_start.strftime("%H:%M")}, hour_end: {self.hour_end.strftime("%H:%M")}, content: {self.content})'
 
 ###### REPORT ######
 
@@ -166,7 +166,7 @@ class Report(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
 
     def __repr__(self) -> str:
-        return f'Report(date_start: {self.date_start.strftime('%d/%m/%Y')}, date_end: {self.date_end.strftime('%d/%m/%Y')}, content: {self.content})'
+        return f'Report(date_start: {self.date_start.strftime("%d/%m/%Y")}, date_end: {self.date_end.strftime("%d/%m/%Y")}, content: {self.content})'
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -184,4 +184,4 @@ class User(db.Model, UserMixin):
     reports = db.relationship('Report', backref = 'author', lazy = True) # One-to-Many
 
     def __repr__(self) -> str:
-        return f'User(name: {self.name}, date_created: {self.date_created.strftime('%d-%m-%Y')})'
+        return f'User(name: {self.name}, date_created: {self.date_created.strftime("%d-%m-%Y")})'

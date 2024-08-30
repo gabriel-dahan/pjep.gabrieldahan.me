@@ -2,3 +2,25 @@
 {% set active_page = 'reports' -%}
 
 {% block title %}Bilans{% endblock %}
+
+{% block content %}
+    <h2>Bilans</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Début</th>
+                <th scope="col">Fin</th>
+                <th>Bilan</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports|sort(attribute = 'date_start', reverse = True) %}
+                <tr>
+                    <th scope="row">{{ report.date_start.strftime('%d/%m/%Y') }}</th>
+                    <th scope="row">{{ report.date_end.strftime('%d/%m/%Y') }}</th>
+                    <td>{{ report.content }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

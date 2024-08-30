@@ -89,7 +89,7 @@
                 
                 {{ form.submit(class="btn btn-primary focus-ring", id='submit') }}
             </div>
-            <button class="btn btn-danger d-none" id="cancel" name="cancel" type="button">Annuler</button>
+            <button class="btn btn-danger d-none" id="reset" type="button">Annuler</button>
         </div>
     </form>
     <div>
@@ -117,7 +117,7 @@
         const deleteBtns = document.querySelectorAll('.delete-btn');
 
         const form = document.getElementById('page-items-form');
-        const cancelBtn = document.getElementById('cancel');
+        const resetBtn = document.getElementById('reset');
 
         const itemIdInput = document.getElementById('item_id');
         const methodInput = document.getElementById('method');
@@ -128,10 +128,16 @@
         const contentInput = document.getElementById('content');
         const submitBtn = document.getElementById('submit');
 
+        document.onreadystatechange = () => {
+            resetBtn.click();
+        }
+
         editBtns.forEach(btn => {
             const item = getItemFromButton(btn);
 
             btn.onclick = () => {
+                resetBtn.click();
+
                 itemIdInput.value = item.id;
 
                 hourStartInput.value = item.hourStart;
@@ -142,7 +148,7 @@
                 submitBtn.value = 'Modifier';
                 submitBtn.focus();
 
-                cancelBtn.classList.remove('d-none');
+                resetBtn.classList.remove('d-none');
 
                 currentMethod = 'PUT';
                 methodInput.value = currentMethod;
@@ -153,6 +159,8 @@
             const item = getItemFromButton(btn);
 
             btn.onclick = () => {
+                resetBtn.click();
+
                 itemIdInput.value = item.id;
 
                 hourStartInput.value = item.hourStart;
@@ -168,14 +176,14 @@
                 submitBtn.value = 'Supprimer';
                 submitBtn.focus();
 
-                cancelBtn.classList.remove('d-none');
+                resetBtn.classList.remove('d-none');
 
                 currentMethod = 'DELETE';
                 methodInput.value = currentMethod;
             }
         });
 
-        cancelBtn.onclick = () => {
+        resetBtn.onclick = () => {
             [hourStartInput, hourEndInput, subjectInput, contentInput].forEach(input => {
                 input.value = '';
                 input.style.color = '#fff';
@@ -185,7 +193,7 @@
 
             submitBtn.value = 'Ajouter';
             
-            cancelBtn.classList.add('d-none');
+            resetBtn.classList.add('d-none');
 
             currentMethod = 'POST';
             methodInput.value = currentMethod;
