@@ -23,76 +23,80 @@
         {% block head %}
         {% endblock head %}
     </head>
-    <body class="d-flex overflow-auto" style="min-height: 100vh;">
-        <div class="d-flex h-100 flex-column flex-shrink-0 p-3 text-white bg-dark-subtle position-fixed z-3" style="width: 280px;">
-            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <body class="d-flex overflow-auto user-select-none" style="min-height: 100vh;">
+        <div>
+            <button class="navbar-toggler position-absolute" style="top: 20px; left: 20px;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas-navbar" aria-controls="offcanvas-navbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark-subtle offcanvas offcanvas-start" tabindex="-1" id="offcanvas-navbar" aria-labelledby="offcanvas-navbar-label" style="width: 280px;">
                 <div class="d-flex flex-column">
-                    <span class="fs-4">PJEP</span>
+                    <span class="fs-4" href="{{ url_for('home') }}" style="cursor: pointer;">PJEP</span>
                     <small>Plan-Journal des Efforts et du Progrès</small>
+                    <button type="button" class="btn-close position-absolute" style="right: 10px;" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
-            </a>
-            <hr>
-            <ul class="nav nav-pills flex-column mb-auto gap-2">
-                {% for href, id, name in navigation_bar %}
+                <hr>
+                <ul class="nav nav-pills flex-column mb-auto gap-2">
+                    {% for href, id, name in navigation_bar %}
+                        <li class="nav-item">
+                            {% if id == active_page %}
+                                <a href="{{ href }}" class="nav-link active">
+                                    {{ name }}
+                                </a>
+                            {% else %}
+                                <a  href="{{ href }}" class="nav-link text-white">
+                                    {{ name }}
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                <hr>
+                <ul class="nav nav-pills flex-column mb-auto gap-2">
                     <li class="nav-item">
-                        {% if id == active_page %}
-                            <a href="{{ href }}" class="nav-link active">
-                                {{ name }}
+                        {% if active_page == 'stats' %}
+                            <a href="{{ url_for('statistics') }}" class="nav-link active">
+                                Statistiques
                             </a>
                         {% else %}
-                            <a  href="{{ href }}" class="nav-link text-white">
-                                {{ name }}
+                            <a href="{{ url_for('statistics') }}" class="nav-link text-white">
+                                Statistiques
                             </a>
                         {% endif %}
                     </li>
-                {% endfor %}
-            </ul>
-            <hr>
-            <ul class="nav nav-pills flex-column mb-auto gap-2">
-                <li class="nav-item">
-                    {% if active_page == 'stats' %}
-                        <a href="{{ url_for('statistics') }}" class="nav-link active">
-                            Statistiques
+                    <li class="nav-item">
+                        {% if active_page == 'subjects' %}
+                            <a href="{{ url_for('subjects') }}" class="nav-link active">
+                                Matières
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('subjects') }}" class="nav-link text-white">
+                                Matières
+                            </a>
+                        {% endif %}
+                    </li>
+                </ul>
+                <hr>
+                <div class="dropdown ml-1 d-flex align-items-center">
+                    {% if current_user.is_authenticated %}
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://robohash.org/{{ current_user.name }}.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                            <strong>{{ current_user.name }}</strong>
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="user-dropdown">
+                            <li><a href="{{ url_for('edit_profile') }}" class="dropdown-item">Modifier le profil</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Se déconnecter</a></li>
+                        </ul>
                     {% else %}
-                        <a href="{{ url_for('statistics') }}" class="nav-link text-white">
-                            Statistiques
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle gap-2" id="user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{{ url_for('static', filename = 'default.jpg') }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                            <p class="mb-0">Non connecté</p>
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="user-dropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('login') }}">Se connecter</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('signup') }}">S'enregistrer</a></li>
+                        </ul>
                     {% endif %}
-                </li>
-                <li class="nav-item">
-                    {% if active_page == 'subjects' %}
-                        <a href="{{ url_for('subjects') }}" class="nav-link active">
-                            Matières
-                        </a>
-                    {% else %}
-                        <a href="{{ url_for('subjects') }}" class="nav-link text-white">
-                            Matières
-                        </a>
-                    {% endif %}
-                </li>
-            </ul>
-            <hr>
-            <div class="dropdown ml-1 d-flex align-items-center">
-                {% if current_user.is_authenticated %}
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://robohash.org/{{ current_user.name }}.png" alt="" width="32" height="32" class="rounded-circle me-2">
-                        <strong>{{ current_user.name }}</strong>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="user-dropdown">
-                        <li><a href="{{ url_for('edit_profile') }}" class="dropdown-item">Modifier le profil</a></li>
-                        <li><a class="dropdown-item" href="{{ url_for('logout') }}">Se déconnecter</a></li>
-                    </ul>
-                {% else %}
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle gap-2" id="user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{{ url_for('static', filename = 'default.jpg') }}" alt="" width="32" height="32" class="rounded-circle me-2">
-                        <p class="mb-0">Non connecté</p>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="user-dropdown">
-                        <li><a class="dropdown-item" href="{{ url_for('login') }}">Se connecter</a></li>
-                        <li><a class="dropdown-item" href="{{ url_for('signup') }}">S'enregistrer</a></li>
-                    </ul>
-                {% endif %}
+                </div>
             </div>
         </div>
 
@@ -122,7 +126,7 @@
             });
 
             // Hyperlink <tr> && <button> :
-            const clickableElements = document.querySelectorAll('tr, button');
+            const clickableElements = document.querySelectorAll('tr, button, span');
             clickableElements.forEach(element => {
                 let href = element.getAttribute('href');
                 if(href) {

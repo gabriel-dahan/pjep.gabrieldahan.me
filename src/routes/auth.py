@@ -53,7 +53,6 @@ def edit_profile():
         password, confirm_pwd = form.password.data, form.confirm_password.data
 
         if password and confirm_pwd:
-            print('--------')
             new_password = sha256_crypt.hash(form.new_password.data)
             user.passwd = new_password
         user.name = new_username
