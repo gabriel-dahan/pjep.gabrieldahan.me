@@ -5,6 +5,7 @@
 
 {% block content %}
     <h1>{{ week_days[page.date.weekday()] }} {{ page.date.day }} {{ months[page.date.month - 1]|lower }} {{ page.date.year }}</h1>
+    <button class="btn btn-danger btn-sm" href="{{ url_for('journal_page_delete', date = page.date.strftime('%d-%m-%Y')) }}">Supprimer la page</button>
     <table class="table table-hover">
         <thead>
             <tr>

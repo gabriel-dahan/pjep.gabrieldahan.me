@@ -109,6 +109,21 @@ def journal_page_edit(date: str):
         )
     return render_template('404.html')
 
+@app.route('/journal/<date>/delete')
+@login_required
+def journal_page_delete(date: str):
+    date_obj = datetime.strptime(date, '%d-%m-%Y')
+    page: JournalPage = JournalPage.query \
+        .filter_by(author_id = current_user.get_id()) \
+        .filter(func.date(JournalPage.date) == date_obj.date()) \
+        .first()
+    
+    if page:
+        db.session.delete(page)
+        db.session.commit()
+        return redirect(url_for('journal'))
+    return render_template('404.html')
+
 @app.route('/journal/raw')
 @login_required
 def journal_raw():

@@ -6,6 +6,7 @@ class FormErrors:
     USERNAME_ALREADY_EXISTS = "Ce nom d'utilisateur existe déjà."
     USERNAME_DOESNT_EXISTS = "Ce nom d'utilisateur n'existe pas."
     INVALID_PASSWORD = "Le mot de passe est incorrect."
+    JOURNAL_PAGE_ALREADY_EXISTS = "Une page a déjà été créée à cette date là."
 
 render_kw = dict(
     class_ = 'form-control'

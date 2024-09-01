@@ -3,12 +3,15 @@ from wtforms import (
     StringField, DateField, SubmitField, TimeField, SelectField, HiddenField
 )
 from wtforms.validators import (
-    DataRequired
+    DataRequired, ValidationError
 )
+from flask_login import current_user
+from sqlalchemy.sql import func
 
 from datetime import datetime
 
 from . import FormErrors, render_kw, render_kw_submit
+from ..models import JournalPage
 
 now = datetime.now
 
@@ -56,7 +59,7 @@ class AddJournalPageForm(FlaskForm):
     date = DateField(
         'Date', 
         validators = [
-            DataRequired(FormErrors.FIELD_REQUIRED)
+            DataRequired(FormErrors.FIELD_REQUIRED),
         ],
         render_kw = { **render_kw, 'value': now().strftime('%Y-%m-%d') }
     )
@@ -70,3 +73,9 @@ class AddJournalPageForm(FlaskForm):
     )
 
     submit = SubmitField('Ajouter', render_kw = render_kw_submit)
+
+    def validate_date(self, date: datetime):
+        if date := JournalPage.query \
+                .filter_by(author_id = current_user.get_id()) \
+                .filter(func.date(JournalPage.date) == date.data).first():
+            raise ValidationError(FormErrors.JOURNAL_PAGE_ALREADY_EXISTS)
