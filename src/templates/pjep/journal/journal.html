@@ -8,23 +8,21 @@
     <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#old-pages" aria-expanded="false" aria-controls="old-pages">
         <div class="d-flex align-items-center gap-2"><img src="{{ url_for('static', filename='collapse.svg') }}" alt="Collapse" style="width: 35px; height: auto;"><h2 class="m-0">Anciennes pages</h2></div>
     </button>
-    <div class="collapse" id="old-pages">
+    <div class="collapse w-100" id="old-pages">
         <div class="card card-body">
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Description</th>
                         <th scope="col">Date</th>
+                        <th scope="col">Description</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for page in pages|sort(attribute = 'date', reverse = True) %}
                         {% set date = page.date.strftime('%d-%m-%Y') %}
                         <tr href="{{ url_for('journal_page', date=date) }}">
-                            <th scope="row">{{ page.id }}</th>
+                            <th>{{ date }}</td>
                             <td>{{ page.content }}</td>
-                            <td>{{ date }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

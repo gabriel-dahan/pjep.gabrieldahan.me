@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField, DateField, SubmitField, TimeField, SelectField, HiddenField
+    StringField, DateField, SubmitField, TimeField, SelectField, HiddenField, TextAreaField
 )
 from wtforms.validators import (
     DataRequired, ValidationError
@@ -79,3 +79,30 @@ class AddJournalPageForm(FlaskForm):
                 .filter_by(author_id = current_user.get_id()) \
                 .filter(func.date(JournalPage.date) == date.data).first():
             raise ValidationError(FormErrors.JOURNAL_PAGE_ALREADY_EXISTS)
+        
+class AddReportForm(FlaskForm):
+    date_start = DateField(
+        'Date de début', 
+        validators = [
+            DataRequired(FormErrors.FIELD_REQUIRED),
+        ],
+        render_kw = { **render_kw }
+    )
+
+    date_end = DateField(
+        'Date de fin', 
+        validators = [
+            DataRequired(FormErrors.FIELD_REQUIRED),
+        ],
+        render_kw = { **render_kw }
+    )
+
+    content = TextAreaField(
+        'Contenu',
+        validators = [
+            DataRequired(FormErrors.FIELD_REQUIRED),
+        ],
+        render_kw = { **render_kw, 'style': 'height: 200px' }
+    )
+
+    submit = SubmitField('Ajouter', render_kw = render_kw_submit)

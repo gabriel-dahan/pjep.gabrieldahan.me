@@ -4,7 +4,8 @@
 {% block title %}Bilans{% endblock %}
 
 {% block content %}
-    <h2>Bilans</h2>
+    <h2>Nouveau bilan</h2>
+    <button class="btn btn-outline-primary" href="{{ url_for('add_report') }}">Faire un bilan</button>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -14,7 +15,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for report in reports|sort(attribute = 'date_start', reverse = True) %}
+            {% for report in reports|sort(attribute = 'date_end', reverse = True) %}
                 <tr>
                     <th scope="row">{{ report.date_start.strftime('%d/%m/%Y') }}</th>
                     <th scope="row">{{ report.date_end.strftime('%d/%m/%Y') }}</th>

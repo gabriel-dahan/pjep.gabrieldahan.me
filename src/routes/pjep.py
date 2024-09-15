@@ -4,14 +4,14 @@ from sqlalchemy.sql import func
 
 from .. import app, db
 from ..models import JournalPage, Subject, JournalPageItem, Report
-from ..forms import EditJournalPageItemForm, AddJournalPageForm
+from ..forms import EditJournalPageItemForm, AddJournalPageForm, AddReportForm
 
 from ..utils import html_to_pdf
 
-import io
 from datetime import datetime
 
 @app.route('/')
+@login_required
 def home():
     return render_template('pjep/home.html')
 
@@ -160,7 +160,25 @@ def holidays_plannings():
 @login_required
 def reports():
     reports = Report.query.filter_by(author_id = current_user.get_id()).all()
-    return render_template('pjep/reports.html', reports = reports)
+    return render_template('pjep/reports/reports.html', reports = reports)
+
+@app.route('/reports/add', methods = ['GET', 'POST'])
+@login_required
+def add_report():
+    form = AddReportForm()
+
+    if form.validate_on_submit():
+        report = Report(
+            date = form.date.data,
+            content = form.description.data,
+            author_id = current_user.id
+        )
+        db.session.add(report)
+        db.session.commit()
+
+        return redirect(url_for('reports'))
+
+    return render_template('pjep/reports/add.html', form = form)
 
 @app.route('/subjects')
 @login_required

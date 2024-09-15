@@ -3,3 +3,4 @@
 - Mettre en place les actions correspondant aux matières.
 - Objectifs et outils de statistiques par rapport à ces objectifs.
 - Home TODO list rapide.
+- Calculer et afficher le temps cumulé de travail sur chaque page.
